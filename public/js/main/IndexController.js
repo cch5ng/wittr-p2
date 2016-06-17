@@ -13,6 +13,15 @@ export default function IndexController(container) {
 
 IndexController.prototype._registerServiceWorker = function() {
   // TODO: register service worker
+  if (!navigator.serviceWorker) return;
+
+  navigator.serviceWorker.register('/sw.js') //not sure significance of the first slash b/c worked without
+  .then(function() {
+    console.log('sw registered');
+  })
+  .catch(function(err) {
+    console.log('error: ' + err);
+  });
 };
 
 // open a connection to the server for live updates
