@@ -9,17 +9,19 @@ self.addEventListener('fetch', function(event) {
 //  if (event.request.url.match(/\S+\.jpg/g)) {
 
 //jake solution
-  if (event.request.url.match(/\S+\.jpg/g)) {
+  if (event.request.url.endsWith('.jpg')) {
   	  event.respondWith(
 	    fetch('/imgs/dr-evil.gif')
 	  );
-  } else {
-  	event.respondWith(
-	    new Response('<h4>sorry but I cannot show an image</h4>', {
-	    	headers: {
-	    		'Content-Type': 'text/html'
-	    	}
-	    })
-	);
-  }
+  } 
+//my solution
+ //  else {
+ //  	event.respondWith(
+	//     new Response('<h4>sorry but I cannot show an image</h4>', {
+	//     	headers: {
+	//     		'Content-Type': 'text/html'
+	//     	}
+	//     })
+	// );
+ //  }
 });
