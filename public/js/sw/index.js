@@ -35,19 +35,7 @@ self.addEventListener('fetch', function(event) {
   		.catch(function(error) {
   			console.log('error: fetch failed; ' + error);
   		});
-
-
-
   	})
-  	//.catch(function(error) {
-  	//where request goes to network
-
-
-  	//})
-
-
-
-
-  	);
+  );
 
 }); 
