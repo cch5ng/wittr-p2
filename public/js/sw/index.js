@@ -21,34 +21,33 @@ self.addEventListener('fetch', function(event) {
   // TODO: respond with an entry from the cache if there is one.
   // If there isn't, fetch from the network.
 
-	console.log('intercept fetch')
+  event.respondWith(
+  	caches.match(event.request).then(function(response) {
+  	//where request handled by cache
+  		if (response) {
+  			return response;
+  		}
 
-  var response;
-  if (!navigator.onLine) {
-  	console.log('offline');
-  }
+  	//request handled by network
+  		return fetch(event.request).then(function(response) {
+  			return response;
+  		})
+  		.catch(function(error) {
+  			console.log('error: fetch failed; ' + error);
+  		});
 
-  //caches.open('wittr-static-v1').then(function(cache) {
-  	var cachedResponse = caches.match(event.request).catch(function() {
-	  	console.log('url: ' + event.request.url);
-	  	return fetch(event.request).then(function(response) {
-	  		return caches.open('wittr-static-v1').then(function(cache) {
-	  			cache.put(event.request, response.clone());
-	  			return response
-	  		})
-	  	});
-	  })
-	  // .then(function(r) {
-	  // 	console.log('response: ' + r);
-	  // 	//response = r;
-	  // 	//return r.clone(); //response.clone();
-	  // })
-	  .catch(function() {
-//	  	console.log('error: ' + err);
-	  	return fetch(event.request);
-	  })
-  //})
 
-  event.respondWith(cachedResponse);
+
+  	})
+  	//.catch(function(error) {
+  	//where request goes to network
+
+
+  	//})
+
+
+
+
+  	);
 
 }); 
