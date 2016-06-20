@@ -21,7 +21,7 @@ self.addEventListener('fetch', function(event) {
   // TODO: respond with an entry from the cache if there is one.
   // If there isn't, fetch from the network.
 
-	console.log('intercept fetch')l
+	console.log('intercept fetch')
 
   var response;
   if (!navigator.onLine) {
