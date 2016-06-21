@@ -28,6 +28,7 @@ IndexController.prototype._registerServiceWorker = function() {
     // indexController._updateReady()
     if (reg.waiting) {
       indexController._updateReady();
+      return;
     }
 
     // TODO: if there's an updated worker installing, track its
@@ -37,6 +38,7 @@ IndexController.prototype._registerServiceWorker = function() {
       reg.installing.addEventListener('statechange', function(ev) {
         if (this.state == 'installed') { //is this correct here
           indexController._updateReady();
+          return;
         }
       })
     }
@@ -49,6 +51,7 @@ IndexController.prototype._registerServiceWorker = function() {
       reg.installing.addEventListener('statechange', function(ev) {
         if (this.state == 'installed') {
           indexController._updateReady();
+          return;
         }
       })
     })
