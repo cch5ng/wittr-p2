@@ -39,7 +39,10 @@ IndexController.prototype._registerServiceWorker = function() {
   // TODO: listen for the controlling service worker changing
   // and reload the page
   navigator.serviceWorker.addEventListener('controllerchange', function() {
-    document.location.reload();
+    //jake soln
+    window.location.reload();
+    //my soln
+    //document.location.reload();
   })
 };
 
