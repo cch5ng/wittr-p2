@@ -2,6 +2,20 @@
 
 This is a silly little demo app for an offline-first course.
 
+## Order of quizes
+
+1. task-register-sw-work
+2. task-custom-response-work
+3. gif-response-work
+4. error-handling-work
+5. task-install-work
+6. task-cache-response-work
+7. task-handling-updates-work
+8. new-cache-used-work
+9. task-update-notify-work
+10. task-update-reload-work
+11. task-page-skeleton-work
+
 # Installing
 
 Dependencies:
