@@ -11,8 +11,8 @@ var dbPromise = idb.open('test-db', 4, function(upgradeDb) {
       var peopleStore = upgradeDb.transaction.objectStore('people');
       peopleStore.createIndex('animal', 'favoriteAnimal');
     case 3:
-      var peopleStore2 = upgradeDb.transaction.objectStore('people');
-      peopleStore2.createIndex('age', 'age');
+      peopleStore = upgradeDb.transaction.objectStore('people');
+      peopleStore.createIndex('age', 'age');
   }
   // TODO: create an index on 'people' named 'age', ordered by 'age'
 });
