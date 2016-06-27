@@ -69,6 +69,7 @@ IndexController.prototype._registerServiceWorker = function() {
 
 IndexController.prototype._showCachedMessages = function() {
   var indexController = this;
+  var latestPosts = [];
 
   return this._dbPromise.then(function(db) {
     // if we're already showing posts, eg shift-refresh
@@ -82,6 +83,27 @@ IndexController.prototype._showCachedMessages = function() {
     // in order of date, starting with the latest.
     // Remember to return a promise that does all this,
     // so the websocket isn't opened until you're done!
+
+    var tx = db.transaction('wittrs');
+    var keyValStore = tx.objectStore('wittrs');
+    var dateIndex = keyValStore.index('by-date');
+
+    return dateIndex.openCursor()
+
+
+  }).then(function(cursor) {
+    if (!cursor) return;
+    latestPosts.push(cursor.value);
+
+  }).then(function reverseDate(cursor) {
+    if (!cursor) return;
+    latestPosts.unshift(cursor.value);
+
+    console.log('latestPosts ar: ' + latestPosts);
+
+    return cursor.continue().then(reverseDate);
+  }).then(function() {
+    indexController._postsView.addPosts(latestPosts);
   });
 };
 
