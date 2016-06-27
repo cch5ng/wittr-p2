@@ -84,27 +84,40 @@ IndexController.prototype._showCachedMessages = function() {
     // Remember to return a promise that does all this,
     // so the websocket isn't opened until you're done!
 
-    var tx = db.transaction('wittrs');
-    var keyValStore = tx.objectStore('wittrs');
-    var dateIndex = keyValStore.index('by-date');
+    //jake solution
+    var index = db.transaction('wittrs')
+                  .objectStore('wittrs')
+                  .index('by-date');
+    return index.getAll().then(function(result) {
+      indexController._postsView.addPosts(result.reverse());
+    })
 
-    return dateIndex.openCursor()
 
-
-  }).then(function(cursor) {
-    if (!cursor) return;
-    latestPosts.push(cursor.value);
-
-  }).then(function reverseDate(cursor) {
-    if (!cursor) return;
-    latestPosts.unshift(cursor.value);
-
-    console.log('latestPosts ar: ' + latestPosts);
-
-    return cursor.continue().then(reverseDate);
-  }).then(function() {
-    indexController._postsView.addPosts(latestPosts);
   });
+
+
+  //my solution
+  //   var tx = db.transaction('wittrs');
+  //   var keyValStore = tx.objectStore('wittrs');
+  //   var dateIndex = keyValStore.index('by-date');
+
+  //   return dateIndex.openCursor()
+
+
+  // }).then(function(cursor) {
+  //   if (!cursor) return;
+  //   latestPosts.push(cursor.value);
+
+  // }).then(function reverseDate(cursor) {
+  //   if (!cursor) return;
+  //   latestPosts.unshift(cursor.value);
+
+  //   console.log('latestPosts ar: ' + latestPosts);
+
+  //   return cursor.continue().then(reverseDate);
+  // }).then(function() {
+  //   indexController._postsView.addPosts(latestPosts);
+  // });
 };
 
 IndexController.prototype._trackInstalling = function(worker) {
