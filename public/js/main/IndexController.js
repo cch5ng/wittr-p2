@@ -14,6 +14,15 @@ function openDatabase() {
   // that uses 'id' as its key
   // and has an index called 'by-date', which is sorted
   // by the 'time' property
+
+  //jake soln
+  // var dbPromise = idb.open('wittr', 1, function(upgradeDb) {
+  //   var keyValStore = upgradeDb.createObjectStore('wittrs', { keyPath: 'id' });
+  //   keyValStore.createIndex('by-date', 'time');
+  // });
+
+
+  //my soln
   var dbPromise = idb.open('wittr', 2, function(upgradeDb) {
     switch(upgradeDb.oldVersion) {
       case 0:
