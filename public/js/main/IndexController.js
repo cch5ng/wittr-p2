@@ -14,6 +14,16 @@ function openDatabase() {
   // that uses 'id' as its key
   // and has an index called 'by-date', which is sorted
   // by the 'time' property
+  var dbPromise = idb.open('wittr', 2, function(upgradeDb) {
+    switch(upgradeDb.oldVersion) {
+      case 0:
+        var keyValStore = upgradeDb.createObjectStore('wittrs', { keyPath: 'id' });
+      case 1:
+        keyValStore.createIndex('by-date', 'time');
+    }
+  });
+
+  return dbPromise;
 }
 
 export default function IndexController(container) {
@@ -135,6 +145,23 @@ IndexController.prototype._onSocketMessage = function(data) {
 
     // TODO: put each message into the 'wittrs'
     // object store.
+
+    console.log('data: ' + data);
+    console.log('type data: ' + typeof data);
+    //data is array of objects
+    openDatabase().then(function(db) {
+      var tx = db.transaction('wittrs', 'readwrite');
+      var keyValStore = tx.objectStore('wittrs');
+      //could have just used messages (line 141), oh well
+      JSON.parse(data).forEach(function(mObj) {
+        keyValStore.put(mObj);
+      })
+      return tx.complete;
+    }).then(function() {
+      console.log('Added favoriteAnimal:cat to keyval');
+    });
+
+    //})
   });
 
   this._postsView.addPosts(messages);
