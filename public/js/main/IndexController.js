@@ -153,6 +153,7 @@ IndexController.prototype._openSocket = function() {
 // called when the web socket sends message data
 IndexController.prototype._onSocketMessage = function(data) {
   var messages = JSON.parse(data);
+  var counter = 0;
 
   this._dbPromise.then(function(db) {
     if (!db) return;
@@ -169,6 +170,25 @@ IndexController.prototype._onSocketMessage = function(data) {
     // Hint: you can use .openCursor(null, 'prev') to
     // open a cursor that goes through an index/store
     // backwards.
+
+
+    var dateIndex = store.index('by-date');
+    return dateIndex.openCursor(null, 'prev');
+  })
+  // .then(function(cursor) {
+  // if (!cursor) return;
+  // return cursor;
+  // })
+  .then(function cleanDb(cursor) {
+    if (!cursor) return;
+
+    if (counter > 29 and cursor) {
+      cursor.delete();
+      counter += 1;
+    }
+    return cursor.continue().then(cleanDb);
+  }).then(function() {
+    console.log('done cursoring');
   });
 
   this._postsView.addPosts(messages);
