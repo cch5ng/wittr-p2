@@ -172,24 +172,33 @@ IndexController.prototype._onSocketMessage = function(data) {
     // backwards.
 
 
-    var dateIndex = store.index('by-date');
-    return dateIndex.openCursor(null, 'prev');
-  })
-  // .then(function(cursor) {
-  // if (!cursor) return;
-  // return cursor;
-  // })
-  .then(function cleanDb(cursor) {
-    if (!cursor) return;
-
-    if (counter > 29 and cursor) {
+    //jake soln
+    store.index('by-date').openCursor(null, 'prev').then(function(cursor) {
+      return cursor.advance(30);
+    }).then(function cleanDb(cursor) {
+      if (!cursor) return;
       cursor.delete();
-      counter += 1;
-    }
-    return cursor.continue().then(cleanDb);
-  }).then(function() {
+      return cursor.continue().then(cleanDb);
+    }).then(function() {
     console.log('done cursoring');
-  });
+    });
+
+
+    //my solution
+  //   var dateIndex = store.index('by-date');
+  //   return dateIndex.openCursor(null, 'prev');
+  // })
+  // .then(function cleanDb(cursor) {
+  //   if (!cursor) return;
+
+  //   if (counter > 29 and cursor) {
+  //     cursor.delete();
+  //     counter += 1;
+  //   }
+  //   return cursor.continue().then(cleanDb);
+  // }).then(function() {
+  //   console.log('done cursoring');
+  // });
 
   this._postsView.addPosts(messages);
 };
