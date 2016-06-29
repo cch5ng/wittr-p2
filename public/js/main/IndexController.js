@@ -177,7 +177,9 @@ IndexController.prototype._onSocketMessage = function(data) {
       return cursor.advance(30);
     }).then(function cleanDb(cursor) {
       if (!cursor) return;
-      cursor.delete();
+      cursor.delete().then(function() {
+        console.log('deleted');
+      });
       return cursor.continue().then(cleanDb);
     }).then(function() {
     console.log('done cursoring');
