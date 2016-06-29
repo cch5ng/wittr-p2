@@ -2,6 +2,8 @@ import PostsView from './views/Posts';
 import ToastsView from './views/Toasts';
 import idb from 'idb';
 
+var contentImgsCache = 'wittr-content-imgs';
+
 function openDatabase() {
   // If the browser doesn't support service worker,
   // we don't care about having a database
@@ -164,6 +166,56 @@ IndexController.prototype._cleanImageCache = function() {
     //
     // Open the 'wittr-content-imgs' cache, and delete any entry
     // that you no longer need.
+    //transaction
+    //obj store
+    //index
+
+    var photosAr = [];
+    var tx = db.transaction('wittrs');
+    var objStore = tx.objectStore('wittrs');
+    var dateIndex = objStore.index('by-date');
+    return dateIndex.getAll().then(function(posts) {
+      posts.forEach(function(post) {
+        if (post.photo) {
+          photosAr.push(post.photo);
+        }
+      })
+      console.log('photosAr: ' + photosAr);
+
+      //remove unnec photos from cache
+      return caches.open(contentImgsCache).then(function(cache) {
+        //here need to do a diff b/t photosAr and the keys of the current cache
+        //whatever is in cur cache but not in photosAr needs to be removed
+        cache.keys().then(function(curKeys) {
+          curKeys.forEach(function(request) {
+            if (!photosAr.includes(request)) {
+              cache.delete(request).then(function() {
+                console.log('img removed from cache: ' + request);
+              });
+            }
+          })
+
+
+
+
+          // var keysToDelete = curKeys.filter(function(key) {
+          //   return photosAr.indexOf(key) == -1;
+          // })
+
+          // console.log('keysToDelete: ' + keysToDelete);
+
+          // keysToDelete.forEach(function(mKey) {
+          //   cache.delete(mKey).then(function() {
+          //     console.log('image has been deleted: ' + mKey);
+          //   })
+          // })
+
+        })
+//        return 
+      })
+    })
+
+
   });
 };
 
