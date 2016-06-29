@@ -70,23 +70,38 @@ function servePhoto(request) {
   // to the browser.
   //
   // HINT: cache.put supports a plain url as the first parameter
-  caches.open(contentImgsCache).then(function(cache) {
-    cache.match(storageUrl).then(function(response) {
-      if (response) {
-        return response
-      }
 
-      fetch(request).then(function(resp) {
-        cache.put(storageUrl, resp);
-      }).catch(function(error) {
-        console.log('error: ' + error);
+  //jake soln (main diff is that he returns the fetch and also returns the first caches.open)
+  return caches.open(contentImgsCache).then(function(cache) {
+    return cache.match(storageUrl).then(function(response) {
+      if (response) { return response}
+
+      return fetch(request).then(function(resp) {
+        cache.put(storageUrl, resp.clone());
+        return resp;
       })
-
-    }).catch(function(err) {
-      console.log('error: ' + err);
     })
-
   })
+
+  //my soln
+  // caches.open(contentImgsCache).then(function(cache) {
+  //   return cache.match(storageUrl).then(function(response) {
+  //     if (response) {
+  //       return response
+  //     }
+
+  //     fetch(request).then(function(resp) {
+  //       cache.put(storageUrl, resp.clone());
+  //       return resp;
+  //     }).catch(function(error) {
+  //       console.log('error: ' + error);
+  //     })
+
+  //   }).catch(function(err) {
+  //     console.log('error: ' + err);
+  //   })
+
+  // })
 
 }
 
