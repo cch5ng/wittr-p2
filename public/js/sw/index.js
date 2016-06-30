@@ -78,20 +78,33 @@ function serveAvatar(request) {
 
   //get avatar from cache
 
-//2nd solution (copied from the images example)
+//jake soln
   return caches.open("wittr-content-imgs").then(function(cache) {
-//missing return on next line
     return cache.match(storageUrl).then(function(response) {
-      if (response) return response;
-
-      return fetch(request).then(function(networkResponse) {
-        cache.put(storageUrl, networkResponse.clone())
-        return networkResponse;
+      var networkResponse = fetch(request).then(function(resp) {
+        cache.put(storageUrl, resp.clone())
+        return resp;
       })
+
+      return response || networkResponse;
     })
   })
-
 }
+
+//2nd solution (copied from the images example)
+//   return caches.open("wittr-content-imgs").then(function(cache) {
+// //missing return on next line
+//     return cache.match(storageUrl).then(function(response) {
+//       if (response) return response;
+
+//       return fetch(request).then(function(networkResponse) {
+//         cache.put(storageUrl, networkResponse.clone())
+//         return networkResponse;
+//       })
+//     })
+//   })
+
+// }
 
 
 //first solution
