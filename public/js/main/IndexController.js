@@ -170,11 +170,11 @@ IndexController.prototype._cleanImageCache = function() {
     //obj store
     //index
 
+//jake soln
     var photosAr = [];
     var tx = db.transaction('wittrs');
     var objStore = tx.objectStore('wittrs');
-    var dateIndex = objStore.index('by-date');
-    return dateIndex.getAll().then(function(posts) {
+    return objStore.getAll().then(function(posts) {
       posts.forEach(function(post) {
         if (post.photo) {
           photosAr.push(post.photo);
@@ -183,41 +183,61 @@ IndexController.prototype._cleanImageCache = function() {
       console.log('photosAr: ' + photosAr);
 
       //remove unnec photos from cache
-      return caches.open(contentImgsCache).then(function(cache) {
-        //here need to do a diff b/t photosAr and the keys of the current cache
-        //whatever is in cur cache but not in photosAr needs to be removed
+      return caches.open(contentImgsCache);
+//jake puts the then() here
+    }).then(function(cache) {
         cache.keys().then(function(curKeys) {
           curKeys.forEach(function(request) {
-            if (!photosAr.includes(request)) {
+//here jake does something diff to handle the url content
+//b/c the urls stored in cache are partial
+            var url = new Url(request.url);
+//here getting a list of the photo urls which are not in photosAr (array to be saved)
+            if (!photosAr.includes(url.pathname)) {
               cache.delete(request).then(function() {
                 console.log('img removed from cache: ' + request);
               });
             }
           })
-
-
-
-
-          // var keysToDelete = curKeys.filter(function(key) {
-          //   return photosAr.indexOf(key) == -1;
-          // })
-
-          // console.log('keysToDelete: ' + keysToDelete);
-
-          // keysToDelete.forEach(function(mKey) {
-          //   cache.delete(mKey).then(function() {
-          //     console.log('image has been deleted: ' + mKey);
-          //   })
-          // })
-
         })
-//        return 
-      })
     })
-
-
   });
 };
+
+//my soln
+//     var photosAr = [];
+//     var tx = db.transaction('wittrs');
+//     var objStore = tx.objectStore('wittrs');
+//     var dateIndex = objStore.index('by-date');
+//     return dateIndex.getAll().then(function(posts) {
+//       posts.forEach(function(post) {
+//         if (post.photo) {
+//           photosAr.push(post.photo);
+//         }
+//       })
+//       console.log('photosAr: ' + photosAr);
+
+//       //remove unnec photos from cache
+//       return caches.open(contentImgsCache).then(function(cache) {
+//         //here need to do a diff b/t photosAr and the keys of the current cache
+//         //whatever is in cur cache but not in photosAr needs to be removed
+//         cache.keys().then(function(curKeys) {
+//           curKeys.forEach(function(request) {
+//             if (!photosAr.includes(request)) {
+//               cache.delete(request).then(function() {
+//                 console.log('img removed from cache: ' + request);
+//               });
+//             }
+//           })
+//         })
+//       })
+//     })
+
+
+//   });
+// };
+
+
+
 
 // called when the web socket sends message data
 IndexController.prototype._onSocketMessage = function(data) {
