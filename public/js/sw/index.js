@@ -49,6 +49,10 @@ self.addEventListener('fetch', function(event) {
     }
     // TODO: respond to avatar urls by responding with
     // the return value of serveAvatar(event.request)
+    if (requestUrl.pathname.startsWith('/avatars/')) {
+      event.respondWith(serveAvatar(event.request));
+      return;
+    }
   }
 
   event.respondWith(
@@ -71,7 +75,42 @@ function serveAvatar(request) {
   // to update the entry in the cache.
   //
   // Note that this is slightly different to servePhoto!
+
+  //get avatar from cache
+
+//2nd solution (copied from the images example)
+  return caches.open("wittr-content-imgs").then(function(cache) {
+//missing return on next line
+    return cache.match(storageUrl).then(function(response) {
+      if (response) return response;
+
+      return fetch(request).then(function(networkResponse) {
+        cache.put(storageUrl, networkResponse.clone())
+        return networkResponse;
+      })
+    })
+  })
+
 }
+
+
+//first solution
+//   return caches.open("wittr-content-imgs").then(function(cache) {
+//     cache.match(storageUrl).then(function(response) {
+//       return response;
+//     })
+//   }).then(function() {
+//   //get avatar from network
+//     console.log('request.url: ' + request.url);
+//     fetch(request.url).then(function(response) {
+//     //put avatar from network into cache
+//       caches.open("wittr-content-imgs").then(function(cache) {
+//         cache.add(storageUrl, response.clone());
+//       })
+//       return response;
+//     })
+//   })
+// }
 
 function servePhoto(request) {
   var storageUrl = request.url.replace(/-\d+px\.jpg$/, '');
