@@ -1,6 +1,6 @@
 import idb from 'idb';
 
-var dbPromise = idb.open('test-db', 3, function(upgradeDb) {
+var dbPromise = idb.open('test-db', 4, function(upgradeDb) {
 
   switch(upgradeDb.oldVersion) {
     case 0:
@@ -12,6 +12,9 @@ var dbPromise = idb.open('test-db', 3, function(upgradeDb) {
     case 2:
       var peopleStore = upgradeDb.transaction.objectStore('people');
       peopleStore.createIndex('animal', 'favoriteAnimal');
+    case 3:
+      var peopleStore = upgradeDb.transaction.objectStore('people');
+      peopleStore.createIndex('age', 'age');
   }
 });
 
@@ -85,12 +88,26 @@ dbPromise.then(function(db) {
   var animalIndex = peopleStore.index('animal');
   return animalIndex.getAll();
 
-//  return peopleStore.getAll();
+  // return animalIndex.getAll('walrus'); // query for only favoriteAnimal: walrus
+  // return peopleStore.getAll();
 }).then(function(people) {
   console.log('people: ' + people);
   if (people.length) {
     people.forEach(p => {
       console.log('p.favoriteAnimal: ' + p.favoriteAnimal);
+    });
+  }
+});
+
+dbPromise.then(function(db) {
+  var tx = db.transaction('people');
+  var peopleStore = tx.objectStore('people');
+  var ageIndex = peopleStore.index('age');
+  return ageIndex.getAll();
+}).then(function(people) {
+  if (people.length) {
+    people.forEach(p => {
+      console.log('p.age: ' + p.age);
     });
   }
 });
