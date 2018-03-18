@@ -1,8 +1,16 @@
 import idb from 'idb';
 
-var dbPromise = idb.open('test-db', 1, function(upgradeDb) {
-  var keyValStore = upgradeDb.createObjectStore('keyval');
-  keyValStore.put("world", "hello");
+var dbPromise = idb.open('test-db', 2, function(upgradeDb) {
+
+  switch(upgradeDb.oldVersion) {
+    case 0:
+      // createObjectStore creates a new table
+      var keyValStore = upgradeDb.createObjectStore('keyval');
+      keyValStore.put("world", "hello");
+    case 1:
+      upgradeDb.createObjectStore('people', {keyPath: 'name'});
+    //default:
+  }
 });
 
 // read "hello" in "keyval"
